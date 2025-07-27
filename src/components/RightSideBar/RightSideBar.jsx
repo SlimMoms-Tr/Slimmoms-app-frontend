@@ -17,8 +17,7 @@ const RightSideBar = ({
   const dispatch = useDispatch();
   const kcal = useSelector(getSideBarDailyCalories);
   const currentDay = useSelector(date);
-  const today = currentDay.split('-').reverse().join('.'); 
-
+  const today = currentDay.split('-').reverse().join('.');
 
   useEffect(() => {
     dispatch(getUserInfo());
@@ -29,39 +28,36 @@ const RightSideBar = ({
       <Container>
         <div className={styles.flexBox}>
           <div>
-            <h4 className={styles.rightSideBar_title}>Сводка за {today}</h4>
+            <h4 className={styles.rightSideBar_title}>Summary for {today}</h4>
             <ul className={styles.rightSideBar_list}>
               <li className={styles.rightSideBar_el}>
-                <span className={styles.rightSideBar_text}>Осталось</span>
+                <span className={styles.rightSideBar_text}>Left</span>
                 <span className={styles.rightSideBar_text}>
-                  {kcalLeft ? kcalLeft : '0'} ккал
+                  {kcalLeft ? kcalLeft : '0'} kcal
                 </span>
               </li>
               <li className={styles.rightSideBar_el}>
-                <span className={styles.rightSideBar_text}>Употреблено</span>
+                <span className={styles.rightSideBar_text}>Consumed</span>
                 <span className={styles.rightSideBar_text}>
-                  {kcalConsumed ? kcalConsumed : '0'} ккал
+                  {kcalConsumed ? kcalConsumed : '0'} kcal
                 </span>
               </li>
               <li className={styles.rightSideBar_el}>
-                <span className={styles.rightSideBar_text}>Дневная норма</span>
+                <span className={styles.rightSideBar_text}>Daily rate</span>
                 <span className={styles.rightSideBar_text}>
-                  {dailyRate ? dailyRate : '0'} ккал
+                  {dailyRate ? dailyRate : '0'} kcal
                 </span>
               </li>
               <li className={styles.rightSideBar_el}>
-                <span className={styles.rightSideBar_text}>n% от нормы</span>
+                <span className={styles.rightSideBar_text}>% of daily rate</span>
                 <span className={styles.rightSideBar_text}>
-                  {percentsOfDailyRate ? Math.floor(percentsOfDailyRate) : '0'}{' '}
-                  %
+                  {percentsOfDailyRate ? Math.floor(percentsOfDailyRate) : '0'} %
                 </span>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className={styles.rightSideBar_title}>
-              Нерекомендуемые продукты
-            </h4>
+            <h4 className={styles.rightSideBar_title}>Not recommended foods</h4>
             <ul className={styles.rightSideBar_product_list}>
               {notAllowedProductsAll.length !== 0 ? (
                 notAllowedProductsAll ? (
@@ -70,21 +66,19 @@ const RightSideBar = ({
                       className={styles.rightSideBar_product_item}
                       key={product}
                     >
-                      {notAllowedProductsAll[
-                        notAllowedProductsAll.length - 1
-                      ] !== product
+                      {notAllowedProductsAll[notAllowedProductsAll.length - 1] !== product
                         ? `${product}, `
                         : `${product}`}
                     </li>
                   ))
                 ) : (
                   <li className={styles.rightSideBar_text}>
-                    Здесь будет отображаться Ваш рацион
+                    Your diet will be displayed here
                   </li>
                 )
               ) : (
                 <li className={styles.rightSideBar_text}>
-                  Здесь будет отображаться Ваш рацион
+                  Your diet will be displayed here
                 </li>
               )}
             </ul>
