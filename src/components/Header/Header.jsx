@@ -1,7 +1,7 @@
 import styles from "./Header.module.css";
-import Logo from "../common/Logo/Logo";
+import Logo from "../Logo/Logo.jsx";
 import Navigation from "../Navigation/Navigation";
-import UserInfo from "../UserInfo/UserInfo";
+import UserInfo from "../UserInfo/UserInfo.jsx";
 import { useSelector } from "react-redux";
 
 export default function Header() {

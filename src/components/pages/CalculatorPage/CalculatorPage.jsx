@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Header from "../components/Header/Header";
-import DailyCaloriesForm from "../components/DailyCalories/DailyCaloriesForm";
-import Modal from "../components/common/Modal/Modal";
+import Header from "../../Header/Header.jsx";
+import DailyCaloriesForm from "../../DailyCalories/DailyCaloriesForm.jsx";
+import Modal from "../../Modal/Modal.jsx";
 import styles from "./CalculatorPage.module.css";
 
 export default function CalculatorPage() {

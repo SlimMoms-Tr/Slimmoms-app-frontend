@@ -1,5 +1,5 @@
-import Header from "../components/Header/Header";
-import DailyCaloriesForm from "../components/DailyCalories/DailyCaloriesForm";
+import Header from "../../Header/Header.jsx";
+import DailyCaloriesForm from "../../DailyCalories/DailyCaloriesForm.jsx";
 import styles from "./MainPage.module.css";
 
 export default function MainPage() {

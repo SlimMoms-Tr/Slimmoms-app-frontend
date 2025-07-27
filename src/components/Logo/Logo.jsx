@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./Logo.module.css";
-import logoImg from "../../../assets/logo.png"; // logo.png dosyasını src/assets içine kopyala
+import logoImg from "../../../frontend/src/assets/logo.png"; // logo.png dosyasını src/assets içine kopyala
 
 export default function Logo() {
   const navigate = useNavigate();

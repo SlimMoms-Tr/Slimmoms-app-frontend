@@ -1,4 +1,4 @@
-import DiaryProductsListItem from "./DiaryProductsListItem";
+import DiaryProductsListItem from "./DiaryProductsListItem.jsx";
 import styles from "./DiaryProductsList.module.css";
 
 export default function DiaryProductsList({ products, onDeleteProduct }) {

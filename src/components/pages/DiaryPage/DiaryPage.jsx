@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Header from "../components/Header/Header";
-import DiaryDateCalender from "../components/Diary/DiaryDateCalender";
-import DiaryAddProductForm from "../components/Diary/DiaryAddProductForm";
-import DiaryProductsList from "../components/Diary/DiaryProductsList";
+import Header from "../../Header/Header.jsx";
+import DiaryDateCalender from "../../Diary/DiaryDateCalender.jsx";
+import DiaryAddProductForm from "../../Diary/DiaryAddProductForm.jsx";
+import DiaryProductsList from "../../Diary/DiaryProductsList.jsx";
 import styles from "./DiaryPage.module.css";
 
 export default function DiaryPage() {
