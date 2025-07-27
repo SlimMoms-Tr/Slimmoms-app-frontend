@@ -50,7 +50,7 @@ export default function CalculatorPage() {
               Your recommended daily calorie intake is
             </h2>
             <div className={styles.calorieValue}>
-              {calorieResult.dailyCalories} <span className={styles.unit}>ккал</span>
+              {calorieResult.dailyCalories} <span className={styles.unit}>kcal</span>
             </div>
             <div className={styles.separator}></div>
             <h3 className={styles.foodTitle}>Foods you should not eat</h3>
