@@ -18,7 +18,6 @@ export default function CalculatorPage() {
 
   const handleFormSubmit = (formData) => {
     console.log("Calculator Form Data:", formData);
-    // Burada API çağrısı yapılacak ve sonuç alınacak
     setShowModal(true);
   };
 

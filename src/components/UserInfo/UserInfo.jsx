@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../redux/authSlice";
+import { logout } from "../../redux/auth/authSlice.js";
 import styles from "./UserInfo.module.css";
 
 export default function UserInfo() {

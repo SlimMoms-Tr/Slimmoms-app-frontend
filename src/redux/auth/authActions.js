@@ -1,4 +1,3 @@
-// authActions.js: Login ve register API isteklerini yöneten fonksiyonlar.
 
 import axios from "axios";
 import {
@@ -8,8 +7,7 @@ import {
   setIsAuthenticated,
 } from "./authSlice";
 import { toast, Bounce } from "react-toastify";
-// api url buraya girilecek ve .env dosyasından alınacak
-//const API_URL = "";
+
 
 export const login = (email, password) => async (dispatch) => {
   try {

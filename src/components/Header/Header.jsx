@@ -1,6 +1,6 @@
 import styles from "./Header.module.css";
 import Logo from "../Logo/Logo.jsx";
-import Navigation from "../Navigation/Navigation";
+import Nav from "../Navigation/HomeNav.jsx";
 import UserInfo from "../UserInfo/UserInfo.jsx";
 import { useSelector } from "react-redux";
 
@@ -11,7 +11,7 @@ export default function Header() {
     <header className={styles.header}>
       <Logo />
       <div className={styles.right}>
-        <Navigation />
+        <Nav />
         {isAuthenticated && <UserInfo />}
       </div>
     </header>
