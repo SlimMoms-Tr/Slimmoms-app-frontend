@@ -1,45 +1,81 @@
-import { BrowserRouter } from "react-router-dom";
-import "./App.css";
-import AppRoutes from "./components/Routes/AppRoutes";
-import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
-import { getUser } from "./redux/auth/authActions";
+import { Suspense, lazy, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import Loading from "./components/Loading/Loading";
 
-function App() {
+import Loader from "./components/Loader/Loader.jsx";
+import { getUser } from "./redux/auth/auth_operation";
+import { getIsAuthenticated } from "./redux/auth/auth_selector";
+
+import routes from "./routes";
+
+import "./App.css";
+import "react-toastify/dist/ReactToastify.css";
+
+const MainPage = lazy(() => import("./pages/MainPage/MainPage.jsx"));
+const DiaryPage = lazy(() => import("./pages/DiaryPage/DiaryPage.jsx"));
+const CalculatorPage = lazy(() =>
+  import("./pages/CalculatorPage/CalculatorPage.jsx")
+);
+const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage.jsx"));
+const RegistrationPage = lazy(() =>
+  import("./pages/RegistrationPage/RegistrationPage.jsx")
+);
+
+const App = () => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
-  const accessToken = useSelector((state) => state.auth.accessToken);
+  const isAccess = useSelector(getIsAuthenticated);
 
   useEffect(() => {
-    (async () => {
-      try {
-        await dispatch(getUser(accessToken));
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
+    if (localStorage.getItem("token")) {
+      dispatch(getUser());
+    }
+  }, [dispatch]);
 
   return (
-    <div className="App">
-      {!isLoading ? (
-        <>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-          <ToastContainer />
-        </>
-      ) : (
-        <div style={{ height: "100vh" }}>
-          <Loading />
-        </div>
-      )}
-    </div>
+    <>
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          <Route
+            path={routes.home}
+            element={
+              isAccess ? <Navigate to={routes.calculator} /> : <MainPage />
+            }
+          />
+          <Route
+            path={routes.login}
+            element={
+              isAccess ? <Navigate to={routes.calculator} /> : <LoginPage />
+            }
+          />
+          <Route
+            path={routes.registration}
+            element={
+              isAccess ? (
+                <Navigate to={routes.calculator} />
+              ) : (
+                <RegistrationPage />
+              )
+            }
+          />
+          <Route
+            path={routes.diary}
+            element={isAccess ? <DiaryPage /> : <Navigate to={routes.login} />}
+          />
+          <Route
+            path={routes.calculator}
+            element={
+              isAccess ? <CalculatorPage /> : <Navigate to={routes.login} />
+            }
+          />
+          {/* Tüm bilinmeyen rotalar için fallback */}
+          <Route path="*" element={<Navigate to={routes.home} />} />
+        </Routes>
+      </Suspense>
+
+      <ToastContainer autoClose={2500} />
+    </>
   );
-}
+};
 
 export default App;

@@ -1,54 +1,60 @@
 .userInfo {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  position: relative;
+  align-items: baseline;
+  font-family: "Gotham Pro", sans-serif;
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: 0.04em;
 }
 
-.username {
-  font-size: 14px;
-  font-weight: 500;
+.userNickname {
+  padding: 10px 15px;
+  border-right: 2px solid #e0e0e0;
   color: #212121;
 }
-
-.separator {
-  width: 1px;
-  height: 16px;
-  background-color: #E0E0E0;
+.userAvatar {
+  position: absolute;
+  top: -5px;
+  left: -40px;
 }
 
-.logoutBtn {
-  background: none;
+.button {
   border: none;
-  color: #212121;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.3s ease;
+  background-color: inherit;
   padding: 0;
+  padding-left: 15px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #9b9faa;
+  cursor: pointer;
 }
 
-.logoutBtn:hover {
-  color: #FF6B35;
-}
-
-/* Tablet */
-@media (max-width: 1024px) {
+@media (max-width: 767px) {
   .userInfo {
-    gap: 10px;
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    right: 0;
+    top: 82px;
+    padding: 4px 15px;
+    background-color: #eff1f3;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .userAvatarBlock {
+    position: relative;
+  }
+  .userAvatar {
+    position: absolute;
+    top: -20px;
+    left: -25px;
   }
 }
 
-/* Mobil */
-@media (max-width: 768px) {
-  .username {
-    font-size: 13px;
-  }
-  
-  .logoutBtn {
-    font-size: 13px;
-  }
-  
-  .separator {
-    height: 14px;
+@media (min-width: 768px) and (max-width: 1279px) {
+  .userInfo {
+    margin-right: 50px;
   }
 }
