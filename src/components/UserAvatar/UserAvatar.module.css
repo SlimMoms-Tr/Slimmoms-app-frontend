@@ -1,0 +1,32 @@
+.avatar {
+  opacity: 1;
+  transition: all 250ms ease-in-out;
+  position: relative;
+}
+
+.avatar:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+  transition: all 250ms ease-in-out;
+  cursor: pointer;
+}
+
+.avatar:hover::after {
+  content: "👥 Click to see team";
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.avatar__link {
+  color: white;
+}

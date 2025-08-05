@@ -1,0 +1,54 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.dateContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dateDisplay {
+  color: #212121;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.2222;
+  opacity: 1;
+  transition: opacity 250ms linear;
+}
+
+.dateDisplay:hover,
+.dateDisplay:focus {
+  opacity: 0.7;
+  transition: opacity 250ms linear;
+}
+
+.calendarIcon {
+  opacity: 1;
+  transition: all 250ms linear;
+  cursor: pointer;
+  fill: #9b9faa;
+}
+
+.calendarIcon:hover,
+.calendarIcon:focus {
+  opacity: 0.7;
+  transition: all 250ms linear;
+  fill: #fc842d;
+}
+
+.dateInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media screen and (min-width: 768px) {
+  .dateDisplay {
+    font-size: 34px;
+    line-height: 1.2058;
+  }
+}

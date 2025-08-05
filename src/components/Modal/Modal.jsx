@@ -1,27 +1,36 @@
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
+
 import styles from "./Modal.module.css";
 
-export default function Modal({ children, onClose }) {
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleEsc);
-    return () => document.removeEventListener("keydown", handleEsc);
-  }, [onClose]);
+const modalRoot = document.querySelector("#modal-root");
 
-  const handleClickOutside = (e) => {
-    if (e.target.classList.contains(styles.overlay)) {
+const Modal = ({ children, onClose }) => {
+  const handleKeyDown = (event) => {
+    if (event.code === "Escape") {
       onClose();
     }
   };
 
-  return (
-    <div className={styles.overlay} onClick={handleClickOutside}>
-      <div className={styles.content}>
-        {children}
-        <button className={styles.closeBtn} onClick={onClose}>×</button>
-      </div>
-    </div>
+  const handleBackdropClick = (event) => {
+    if (event.currentTarget === event.target) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  });
+
+  return createPortal(
+    <div className={styles.backdrop} onClick={handleBackdropClick}>
+      <div className={styles.modal}>{children}</div>
+    </div>,
+    modalRoot
   );
-}
+};
+
+export default Modal;
