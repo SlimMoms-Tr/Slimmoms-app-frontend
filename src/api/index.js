@@ -9,6 +9,15 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Public endpoints için ayrı instance (authentication gerektirmeyen)
+const publicApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: false,
+});
+
 // Product search için ayrı instance (CORS sorunu için)
 const productSearchApi = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
@@ -76,7 +85,7 @@ export const authApi = {
 };
 
 export const calorieApi = {
-  getPublicCalories: () => api.post("/calorie/public-calories"),
+  getPublicCalories: () => publicApi.post("/calorie/public-calories"),
   getPrivateCalories: (data) => api.post("/calorie/private-calories", data),
 };
 
