@@ -1,5 +1,5 @@
 .diaryAddProductForm {
-  margin-top: 40px;
+  margin-top: 20px;
   position: relative;
 }
 
@@ -8,73 +8,91 @@
   align-items: baseline;
 }
 
-.hiddenText {
-  display: none;
-}
-
-/* Селект */
-
-.selectProduct {
-  position: absolute;
-  top: 70px;
-  left: 0;
+.formContainer {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
   width: 100%;
-  height: 100px;
-
-  overflow-y: scroll;
-}
-.optionStyle {
-  color: grey;
-  text-align: center;
-}
-@media screen and (min-width: 768px) {
-  .selectProduct {
-    width: 70%;
-    height: 150px;
-  }
+  margin-top: 10px;
 }
 
-/* Опция селекта */
-
-.selectProduct > option {
-  padding: 5px 5px;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-
-  transition: all 250ms linear;
-}
-.selectProduct > option:first-child:hover {
-  background-color: white;
-  color: grey;
-  opacity: 80%;
-  cursor: default;
+.inputContainer {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 40px;
 }
 
-/* Опция при ховере */
+.searchResults {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
-.selectProduct > option:hover {
-  background-color: var(--color-active);
-  color: white;
-
-  transition: all 250ms linear;
-  overflow: visible;
-
+.searchResults li {
+  padding: 10px 15px;
   cursor: pointer;
+  color: #212121;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.searchResults li:hover {
+  background-color: #f5f5f5;
+}
+
+.searchResults li:last-child {
+  border-bottom: none;
+}
+
+.addButton {
+  background-color: #fc842d !important;
+  color: white !important;
+  border-radius: 50% !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  box-shadow: 0 2px 4px rgba(252, 132, 45, 0.3) !important;
+  transition: all 0.3s ease !important;
+  align-self: flex-end;
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+}
+
+.addButton:hover {
+  background-color: #e6731a !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 8px rgba(252, 132, 45, 0.4) !important;
+}
+
+.addButton:disabled {
+  background-color: #ccc !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 @media screen and (max-width: 767px) {
-  .form {
+  .formContainer {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    gap: 15px;
   }
 
-  .hiddenText {
-    display: block;
+  .inputContainer {
+    width: 100%;
   }
 
-  .hiddenIcon {
-    display: none;
+  .addButton {
+    align-self: center;
   }
 }

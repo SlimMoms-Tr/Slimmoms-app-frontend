@@ -10,7 +10,7 @@ import user from "./user/user_reducer";
 const persistConfig = {
   key: "auth",
   storage,
-  whitelist: ["token"],
+  whitelist: ["token"], 
 };
 
 const store = configureStore({

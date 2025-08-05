@@ -5,8 +5,11 @@ import routes from "../../routes";
 
 const Logo = ({ isLogged }) => {
   const hidden = isLogged ? null : styles.isHidden;
+  
+  const targetRoute = isLogged ? routes.calculator : routes.home;
+  
   return (
-    <Link to={routes.diary} className={styles.link}>
+    <Link to={targetRoute} className={styles.link}>
       <img src={logo} alt="SlimMom Logo" className={styles.logo} />
       <p className={`${styles.logoTitle} ${hidden}`}>
         Slim<span className={styles.activeColorLogo}>Mom</span>

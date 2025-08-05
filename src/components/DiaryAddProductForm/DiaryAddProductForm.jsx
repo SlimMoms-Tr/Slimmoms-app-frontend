@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import styles from "./DiaryAddProductForm.module.css";
-import { makeStyles } from "@mui/styles";
 import TextField from "@mui/material/TextField";
 import Button from "../Button/Button.jsx";
 import { useFormik } from "formik";
@@ -9,31 +8,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct } from "../../redux/day/day_operation";
 import { date } from "../../redux/day/day_selector";
-import api from "../../utils/api";
-
-const useStyles = makeStyles({
-  input: {
-    width: "100%",
-  },
-  nameInput: {
-    marginBottom: 30,
-    "@media (min-width: 768px)": {
-      width: 240,
-      marginRight: 30,
-    },
-  },
-  weightInput: {
-    marginBottom: 60,
-    "@media (min-width: 768px)": {
-      width: 105,
-      marginRight: 48,
-    },
-    "@media (min-width: 1280px)": {
-      width: 105,
-      marginRight: 75,
-    },
-  },
-});
+import { productApi } from "../../api";
 
 const validationSchema = yup.object({
   productName: yup.string("Enter product").required("Product is required!"),
@@ -48,7 +23,6 @@ const validationSchema = yup.object({
 });
 
 const DiaryAddProductForm = () => {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const currentDate = useSelector(date);
   const today = new Date(
@@ -56,6 +30,8 @@ const DiaryAddProductForm = () => {
   )
     .toISOString()
     .split("T")[0];
+
+  const effectiveDate = currentDate || today;
 
   const formik = useFormik({
     initialValues: {
@@ -66,45 +42,43 @@ const DiaryAddProductForm = () => {
 
     onSubmit: (values, { resetForm }) => {
       const productWeight = values.productWeight;
-      if (currentDate === today) {
-        dispatch(
-          addProduct({
-            date: currentDate,
-            product: selectedData,
-            weight: productWeight,
-          })
-        );
-        resetForm({ values: "" });
-        setSearchProductRes([]);
-        setSelectedData("");
-      }
+      dispatch(
+        addProduct({
+          date: effectiveDate,
+          product: selectedData,
+          weight: productWeight,
+        })
+      );
+      resetForm({ values: { productName: "", productWeight: "" } });
+      setSearchProductRes([]);
+      setSelectedData("");
     },
   });
 
   const [searchProductRes, setSearchProductRes] = useState([]);
-
   const { productName } = formik.values;
-
+  const [selectedData, setSelectedData] = useState("");
   const [t, setT] = useState(null);
+
   useEffect(() => {
     if (t) clearTimeout(t);
 
     if (productName.length >= 3) {
       setT(setTimeout(() => fetchData(productName), 500));
+    } else {
+      setSearchProductRes([]);
     }
-  }, [productName]);
+  }, [productName, t]);
 
   const fetchData = async (name) => {
     try {
-      const { data } = await api.get(`/products?search=${name}`);
-      setSearchProductRes(data);
+      const { data } = await productApi.searchProducts(name);
+      setSearchProductRes(data.data); 
     } catch (error) {
       console.error("Error fetching products:", error);
       setSearchProductRes([]);
     }
   };
-
-  const [selectedData, setSelectedData] = useState(searchProductRes[0] || "");
 
   return (
     <div className={styles.diaryAddProductForm}>
@@ -112,7 +86,31 @@ const DiaryAddProductForm = () => {
         <div className={styles.formContainer}>
           <div className={styles.inputContainer}>
             <TextField
-              className={`${classes.input} ${classes.nameInput}`}
+              sx={{
+                width: "100%",
+                mb: 0,
+                "& .MuiInputBase-root": {
+                  borderBottom: "1px solid #9b9faa",
+                  minHeight: "40px",
+                  padding: "0",
+                  margin: "0",
+                },
+                "& .MuiInputBase-input": {
+                  color: "#212121",
+                  padding: "8px 0",
+                  "&::placeholder": {
+                    color: "#9b9faa",
+                    opacity: 1,
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  margin: "4px 0 0 0",
+                },
+                "@media (min-width: 768px)": {
+                  width: 240,
+                  marginRight: "30px",
+                },
+              }}
               id="productName"
               name="productName"
               placeholder="Enter product name"
@@ -124,6 +122,7 @@ const DiaryAddProductForm = () => {
               helperText={
                 formik.touched.productName && formik.errors.productName
               }
+              variant="standard"
             />
             {searchProductRes.length > 0 && (
               <ul className={styles.searchResults}>
@@ -145,7 +144,35 @@ const DiaryAddProductForm = () => {
 
           <div className={styles.inputContainer}>
             <TextField
-              className={`${classes.input} ${classes.weightInput}`}
+              sx={{
+                width: "100%",
+                mb: 0,
+                "& .MuiInputBase-root": {
+                  borderBottom: "1px solid #9b9faa",
+                  minHeight: "40px",
+                  padding: "0",
+                  margin: "0",
+                },
+                "& .MuiInputBase-input": {
+                  color: "#212121",
+                  padding: "8px 0",
+                  "&::placeholder": {
+                    color: "#9b9faa",
+                    opacity: 1,
+                  },
+                },
+                "& .MuiFormHelperText-root": {
+                  margin: "4px 0 0 0",
+                },
+                "@media (min-width: 768px)": {
+                  width: 105,
+                  marginRight: "48px",
+                },
+                "@media (min-width: 1280px)": {
+                  width: 105,
+                  marginRight: "75px",
+                },
+              }}
               id="productWeight"
               name="productWeight"
               placeholder="Grams"
@@ -159,6 +186,7 @@ const DiaryAddProductForm = () => {
               helperText={
                 formik.touched.productWeight && formik.errors.productWeight
               }
+              variant="standard"
             />
           </div>
 
@@ -166,8 +194,11 @@ const DiaryAddProductForm = () => {
             type="submit"
             customType="primary"
             disabled={
-              formik.isSubmitting || !formik.dirty || currentDate !== today
+              formik.isSubmitting || 
+              !selectedData || 
+              !formik.values.productWeight
             }
+            className={styles.addButton}
           >
             <AddIcon />
           </Button>

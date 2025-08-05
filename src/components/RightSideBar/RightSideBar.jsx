@@ -62,25 +62,15 @@ const RightSideBar = ({
               Not Recommended Products
             </h4>
             <ul className={styles.rightSideBar_product_list}>
-              {notAllowedProductsAll.length !== 0 ? (
-                notAllowedProductsAll ? (
-                  notAllowedProductsAll.map((product) => (
-                    <li
-                      className={styles.rightSideBar_product_item}
-                      key={product}
-                    >
-                      {notAllowedProductsAll[
-                        notAllowedProductsAll.length - 1
-                      ] !== product
-                        ? `${product}, `
-                        : `${product}`}
-                    </li>
-                  ))
-                ) : (
-                  <li className={styles.rightSideBar_text}>
-                    Your diet will be displayed here
+              {notAllowedProductsAll && notAllowedProductsAll.length > 0 ? (
+                notAllowedProductsAll.map((product, index) => (
+                  <li
+                    className={styles.rightSideBar_product_item}
+                    key={index}
+                  >
+                    {product}
                   </li>
-                )
+                ))
               ) : (
                 <li className={styles.rightSideBar_text}>
                   Your diet will be displayed here

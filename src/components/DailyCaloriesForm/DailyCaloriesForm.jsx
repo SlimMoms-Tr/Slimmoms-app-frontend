@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as yup from "yup";
 import { Formik, Field, Form } from "formik";
+import { toast } from "react-toastify";
+import { memo } from "react";
 
 import Button from "../Button/Button.jsx";
 import Modal from "../Modal/Modal.jsx";
@@ -39,32 +41,34 @@ const DailyCaloriesForm = () => {
     setModal(!modal);
   };
 
-  const handleSubmit = (values, userId) => {
+  const handleSubmit = async (values, userId) => {
     localStorage.setItem("bloodType", values.bloodType);
 
-    localStorage.setItem("age", values.age);
-    localStorage.setItem("currentWeight", values.currentWeight);
-    localStorage.setItem("desiredWeight", values.desiredWeight);
-    localStorage.setItem("height", values.height);
-    localStorage.setItem("blood", values.bloodType);
+    const backendValues = {
+      age: values.age,
+      weight: values.weight,
+      targetWeight: values.targetWeight,
+      height: values.height,
+      bloodType: values.bloodType,
+    };
 
-    if (userId) {
-      dispatch(dailyCaloriesAuth({ values, userId }));
-    } else {
-      dispatch(dailyCalories(values));
+    try {
+      if (userId) {
+        const today = new Date(
+          new Date().getTime() - new Date().getTimezoneOffset() * 60000
+        )
+          .toISOString()
+          .split("T")[0];
+        await dispatch(dailyCaloriesAuth({ values: backendValues, date: today })).unwrap();
+        toast.success("Daily calorie norm calculated successfully!");
+        toggleModal(); 
+      } else {
+        await dispatch(dailyCalories(backendValues)).unwrap();
+        toggleModal();
+      }
+    } catch {
+      toast.error("Failed to calculate daily calories");
     }
-
-    if (!IsAuthenticated) {
-      toggleModal();
-    }
-  };
-
-  const isChecked = () => {
-    const store = localStorage.getItem("bloodType");
-    if (store) {
-      return store;
-    }
-    return "";
   };
 
   const validationsSchema = yup.object().shape({
@@ -80,18 +84,18 @@ const DailyCaloriesForm = () => {
       .min(10, "Minimum value 10 years")
       .max(120, "Maximum value 120 years")
       .required("Required field"),
-    currentWeight: yup
+    weight: yup
       .number()
       .typeError("Must be a number")
       .min(20, "Minimum value 20 kg")
       .max(250, "Maximum value 250 kg")
       .required("Required field"),
-    desiredWeight: yup
+    targetWeight: yup
       .number()
       .typeError("Must be a number")
       .min(25, "Minimum value 25 kg")
       .max(
-        yup.ref("currentWeight"),
+        yup.ref("weight"),
         "Maximum value cannot be greater than current weight"
       )
       .required("Required field"),
@@ -112,13 +116,13 @@ const DailyCaloriesForm = () => {
           initialValues={{
             height: "",
             age: "",
-            currentWeight: "",
-            desiredWeight: "",
-            bloodType: `${isChecked()}`,
+            weight: "",
+            targetWeight: "",
+            bloodType: localStorage.getItem("bloodType") || "",
           }}
           validateOnBlur
-          onSubmit={(values, actions) => {
-            handleSubmit(values, userId);
+          onSubmit={async (values, actions) => {
+            await handleSubmit(values, userId);
             if (IsAuthenticated) {
               localStorage.removeItem("bloodType");
               localStorage.removeItem("calc-form");
@@ -177,15 +181,15 @@ const DailyCaloriesForm = () => {
                     <InputField
                       label="Current Weight *"
                       type="number"
-                      name={"currentWeight"}
+                      name={"weight"}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      value={values.currentWeight}
+                      value={values.weight}
                     />
                     <div className={styles.caloriesFormErrorContainer}>
-                      {touched.currentWeight && errors.currentWeight && (
+                      {touched.weight && errors.weight && (
                         <p className={styles.caloriesFormError}>
-                          {errors.currentWeight}
+                          {errors.weight}
                         </p>
                       )}
                     </div>
@@ -196,15 +200,15 @@ const DailyCaloriesForm = () => {
                     <InputField
                       label="Desired Weight *"
                       type="number"
-                      name={"desiredWeight"}
+                      name={"targetWeight"}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      value={values.desiredWeight}
+                      value={values.targetWeight}
                     />
                     <div className={styles.caloriesFormErrorContainer}>
-                      {touched.desiredWeight && errors.desiredWeight && (
+                      {touched.targetWeight && errors.targetWeight && (
                         <p className={styles.caloriesFormError}>
-                          {errors.desiredWeight}
+                          {errors.targetWeight}
                         </p>
                       )}
                     </div>
@@ -219,6 +223,7 @@ const DailyCaloriesForm = () => {
                         name="bloodType"
                         value="1"
                         id="1-radio-button"
+                        label="A"
                       />
                       <RadioButton
                         onChange={handleChange}
@@ -226,6 +231,7 @@ const DailyCaloriesForm = () => {
                         name="bloodType"
                         value="2"
                         id="2-radio-button"
+                        label="B"
                       />
                       <RadioButton
                         onChange={handleChange}
@@ -233,6 +239,7 @@ const DailyCaloriesForm = () => {
                         name="bloodType"
                         value="3"
                         id="3-radio-button"
+                        label="AB"
                       />
                       <RadioButton
                         onChange={handleChange}
@@ -240,6 +247,7 @@ const DailyCaloriesForm = () => {
                         name="bloodType"
                         value="4"
                         id="4-radio-button"
+                        label="O"
                       />
                     </ul>
                     <div className={styles.caloriesFormErrorContainer}>
@@ -291,14 +299,23 @@ const DailyCaloriesForm = () => {
             )}
           </ul>
           <div className={styles.modal_button}>
-            <NavLink to={routes.registration}>
+            {IsAuthenticated ? (
               <Button
-                text="Start Losing Weight"
+                text="Continue"
                 customType="primary"
                 type="button"
                 onClick={toggleModal}
               />
-            </NavLink>
+            ) : (
+              <NavLink to={routes.registration}>
+                <Button
+                  text="Start Losing Weight"
+                  customType="primary"
+                  type="button"
+                  onClick={toggleModal}
+                />
+              </NavLink>
+            )}
           </div>
           <button
             type="button"
@@ -311,7 +328,7 @@ const DailyCaloriesForm = () => {
   );
 };
 
-const InputField = ({ label, type, value, name, onChange, onBlur }) => (
+const InputField = memo(({ label, type, value, name, onChange, onBlur }) => (
   <label>
     <Field
       required
@@ -323,9 +340,9 @@ const InputField = ({ label, type, value, name, onChange, onBlur }) => (
     />
     <div className={styles.labelText}>{label}</div>
   </label>
-);
+));
 
-const RadioButton = ({ name, value, id, onChange, onBlur }) => (
+const RadioButton = memo(({ name, value, id, onChange, onBlur, label }) => (
   <li>
     <Field
       type="radio"
@@ -335,11 +352,11 @@ const RadioButton = ({ name, value, id, onChange, onBlur }) => (
       onChange={onChange}
       onBlur={onBlur}
     />
-    <label htmlFor={id}>{value}</label>
+    <label htmlFor={id}>{label}</label>
     <div className={styles.check}>
       <div className={styles.inside}></div>
     </div>
   </li>
-);
+));
 
 export default DailyCaloriesForm;

@@ -14,15 +14,17 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import Loader from "../../components/Loader/Loader.jsx";
 
 import { getUserInfo } from "../../redux/user/user_operation";
-import { getNotAllowedProductsAll } from "../../redux/user/user_selector";
+import { getUserCalories } from "../../redux/dailyCalories/dailyCalories_operation";
+import { getUserId } from "../../redux/user/user_selector";
 import {
   getKcalLeft,
   getKcalConsumed,
-  getDailyRate,
-  getPercentsOfDailyRate,
   date,
   getLoading,
 } from "../../redux/day/day_selector";
+import { getDay } from "../../redux/day/day_operation";
+import { getNotAllowedProducts } from "../../redux/dailyCalories/dailyCalories_selector";
+import { getSideBarDailyCalories } from "../../redux/dailyCalories/dailyCalories_selector";
 
 import { motivation } from "../../utils/motivation";
 import styles from "./DiaryPage.module.css";
@@ -32,18 +34,17 @@ const DiaryPage = () => {
 
   const kcalLeft = useSelector(getKcalLeft);
   const kcalConsumed = useSelector(getKcalConsumed);
-  const dailyRate = useSelector(getDailyRate);
-  const percentsOfDailyRate = useSelector(getPercentsOfDailyRate);
-  const notAllowedProductsAll = useSelector(getNotAllowedProductsAll);
+  const notAllowedProducts = useSelector(getNotAllowedProducts);
+  const userId = useSelector(getUserId);
 
   const today = new Date(
     new Date().getTime() - new Date().getTimezoneOffset() * 60000
   )
     .toISOString()
-    .split("T")[0]; 
-  const currentDate = useSelector(date); 
+    .split("T")[0];
+  const currentDate = useSelector(date);
 
-  const isLoading = useSelector(getLoading); 
+  const isLoading = useSelector(getLoading);
 
   const [mobileFormIsVisible, setMobileFormIsVisible] = useState(false);
   const handleClick = () => {
@@ -53,7 +54,13 @@ const DiaryPage = () => {
   useEffect(() => {
     document.title = "Diary | SlimMom";
     dispatch(getUserInfo());
-  }, [dispatch]);
+
+    dispatch(getUserCalories());
+
+    if ((userId || localStorage.getItem("accessToken")) && currentDate) {
+      dispatch(getDay({ userId, date: currentDate }));
+    }
+  }, [dispatch, userId, currentDate]);
 
   useEffect(() => {
     if (kcalLeft < 0 && currentDate === today) {
@@ -61,7 +68,24 @@ const DiaryPage = () => {
         `🐷 ${motivation[Math.floor(Math.random() * motivation.length)]}`
       );
     }
-  }, [kcalLeft, today, currentDate]); 
+  }, [kcalLeft, today, currentDate]);
+
+  const sideBarDailyCalories = useSelector(getSideBarDailyCalories);
+
+  // Eğer kullanıcının hesaplama geçmişi yoksa boş değerler göster
+  const finalKcalLeft =
+    sideBarDailyCalories === null ? 0 : sideBarDailyCalories - kcalConsumed;
+  const finalKcalConsumed = sideBarDailyCalories === null ? 0 : kcalConsumed;
+  const finalDailyRate =
+    sideBarDailyCalories === null ? 0 : sideBarDailyCalories;
+  const finalPercentsOfDailyRate =
+    sideBarDailyCalories === null
+      ? 0
+      : sideBarDailyCalories
+      ? Math.round((kcalConsumed / sideBarDailyCalories) * 100)
+      : 0;
+  const finalNotAllowedProducts =
+    sideBarDailyCalories === null ? [] : notAllowedProducts;
 
   return (
     <>
@@ -86,21 +110,13 @@ const DiaryPage = () => {
                   <AddIcon />
                 </Button>
               </div>
-              {!dailyRate ? (
-                <h3 className={styles.notification}>
-                  To add products to the list - fill out the form on the
-                  Calculator page
-                </h3>
-              ) : (
-                ""
-              )}
             </div>
             <RightSideBar
-              kcalLeft={kcalLeft}
-              kcalConsumed={kcalConsumed}
-              dailyRate={dailyRate}
-              percentsOfDailyRate={percentsOfDailyRate}
-              notAllowedProductsAll={notAllowedProductsAll}
+              kcalLeft={finalKcalLeft}
+              kcalConsumed={finalKcalConsumed}
+              dailyRate={finalDailyRate}
+              percentsOfDailyRate={finalPercentsOfDailyRate}
+              notAllowedProductsAll={finalNotAllowedProducts}
             />
           </>
         ) : (

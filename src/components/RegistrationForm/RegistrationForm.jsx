@@ -7,6 +7,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { register } from "../../redux/auth/auth_operation";
 import routes from "../../routes";
 import { NavLink } from "react-router-dom";
@@ -26,6 +27,7 @@ const validationSchema = yup.object({
 const RegistrationForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -34,9 +36,14 @@ const RegistrationForm = () => {
       password: "",
     },
     validationSchema,
-    onSubmit: (values, { resetForm }) => {
-      dispatch(register(values));
-      resetForm();
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        await dispatch(register(values)).unwrap();
+        navigate(routes.login);
+        resetForm();
+      } catch (error) {
+        console.error("Registration failed:", error);
+      }
     },
   });
 

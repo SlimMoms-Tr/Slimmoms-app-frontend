@@ -15,14 +15,27 @@ export const getUserInfo = createAsyncThunk(
       dispatch(setLoading(true));
 
       const response = await api.get("/auth/me");
-      const data = response.data;
+      const userData = response.data.data;
 
-      dispatch(setUserInfo(data));
-      dispatch(setNotAllowedProducts(data.notAllowedProducts || []));
-      dispatch(setDays(data.days || []));
+      const userInfo = {
+        id: userData._id,
+        name: userData.name,
+        email: userData.email,
+        notAllowedProducts: [],
+        days: [],
+      };
+
+      dispatch(setUserInfo(userInfo));
+      dispatch(setNotAllowedProducts(userInfo.notAllowedProducts || []));
+      dispatch(setDays(userInfo.days || []));
 
       dispatch(setLoading(false));
     } catch (error) {
+      if (error.response?.status === 401) {
+        dispatch(setLoading(false));
+        return;
+      }
+
       dispatch(
         setError(error.response?.data?.message || "Failed to get user info")
       );

@@ -7,84 +7,66 @@ import RightSideBar from "../../components/RightSideBar/RightSideBar.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
 
 import { getUserInfo } from "../../redux/user/user_operation";
-import {
-  getUserId,
-  getNotAllowedProductsAll,
-} from "../../redux/user/user_selector";
-import {
-  getKcalLeft,
-  getKcalConsumed,
-  getDailyRate,
-  getPercentsOfDailyRate,
-} from "../../redux/day/day_selector";
+import { getUserCalories } from "../../redux/dailyCalories/dailyCalories_operation";
+import { getUserId } from "../../redux/user/user_selector";
+import { getKcalConsumed } from "../../redux/day/day_selector";
 import { getDay } from "../../redux/day/day_operation";
 import {
   getSideBarDailyCalories,
-  getSideBarEatenCalories,
-  getSideBarDailyRate,
-  getSideBarPercents,
   getLoading,
+  getNotAllowedProducts,
 } from "../../redux/dailyCalories/dailyCalories_selector";
-import { dailyCaloriesAuth } from "../../redux/dailyCalories/dailyCalories_operation";
+import { getIsAuthenticated } from "../../redux/auth/auth_selector";
 
 import styles from "./CalculatorPage.module.css";
 
 const CalculatorPage = () => {
   const isLoading = useSelector(getLoading);
+  const isAuthenticated = useSelector(getIsAuthenticated);
 
-  const kcalLeft = useSelector(getKcalLeft);
   const kcalConsumed = useSelector(getKcalConsumed);
-  const dailyRate = useSelector(getDailyRate);
-  const percentsOfDailyRate = useSelector(getPercentsOfDailyRate);
 
-  const notAllowedProductsAll = useSelector(getNotAllowedProductsAll);
+  const notAllowedProducts = useSelector(getNotAllowedProducts);
 
   const sideBarDailyCalories = useSelector(getSideBarDailyCalories);
-  const sideBarEatenCalories = useSelector(getSideBarEatenCalories);
-  const sideBarDailyRate = useSelector(getSideBarDailyRate);
-  const sideBarPercents = useSelector(getSideBarPercents);
 
   const userId = useSelector(getUserId);
   const today = new Date(
     new Date().getTime() - new Date().getTimezoneOffset() * 60000
   )
     .toISOString()
-    .split("T")[0]; 
+    .split("T")[0];
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     document.title = "Calculator | SlimMom";
     dispatch(getUserInfo());
-    dispatch(getDay(userId, today));
-  }, [dispatch, userId, today]);
 
-  useEffect(() => {
-    const age = localStorage.getItem("age");
-    const currentWeight = localStorage.getItem("currentWeight");
-    const desiredWeight = localStorage.getItem("desiredWeight");
-    const height = localStorage.getItem("height");
-    const blood = localStorage.getItem("blood");
+    dispatch(getUserCalories());
 
-    if (
-      age !== null &&
-      currentWeight !== null &&
-      desiredWeight !== null &&
-      height !== null &&
-      blood !== null
-    ) {
-      const values = {
-        age: Number(age),
-        currentWeight: Number(currentWeight),
-        desiredWeight: Number(desiredWeight),
-        height: Number(height),
-        bloodType: Number(blood),
-      };
-
-      dispatch(dailyCaloriesAuth({ values, userId }));
+    if (userId && isAuthenticated) {
+      dispatch(getDay({ userId, date: today }));
     }
-    // eslint-disable-next-line
-  }, []);
+  }, [dispatch, userId, isAuthenticated, today]);
+
+  const summaryKcalLeft = sideBarDailyCalories
+    ? sideBarDailyCalories - kcalConsumed
+    : 0;
+  const summaryKcalConsumed = kcalConsumed || 0;
+  const summaryDailyRate = sideBarDailyCalories || 0;
+  const summaryPercents = sideBarDailyCalories
+    ? Math.round((summaryKcalConsumed / summaryDailyRate) * 100)
+    : 0;
+
+  const finalKcalLeft = sideBarDailyCalories === null ? 0 : summaryKcalLeft;
+  const finalKcalConsumed =
+    sideBarDailyCalories === null ? 0 : summaryKcalConsumed;
+  const finalDailyRate = sideBarDailyCalories === null ? 0 : summaryDailyRate;
+  const finalPercentsOfDailyRate =
+    sideBarDailyCalories === null ? 0 : summaryPercents;
+  const finalNotAllowedProducts =
+    sideBarDailyCalories === null ? [] : notAllowedProducts;
 
   return (
     <>
@@ -95,15 +77,11 @@ const CalculatorPage = () => {
         </div>
 
         <RightSideBar
-          kcalLeft={sideBarDailyCalories ? sideBarDailyCalories : kcalLeft}
-          kcalConsumed={
-            sideBarEatenCalories ? sideBarEatenCalories : kcalConsumed
-          }
-          dailyRate={sideBarDailyRate ? sideBarDailyRate : dailyRate}
-          percentsOfDailyRate={
-            sideBarPercents ? sideBarPercents : percentsOfDailyRate
-          }
-          notAllowedProductsAll={notAllowedProductsAll}
+          kcalLeft={finalKcalLeft}
+          kcalConsumed={finalKcalConsumed}
+          dailyRate={finalDailyRate}
+          percentsOfDailyRate={finalPercentsOfDailyRate}
+          notAllowedProductsAll={finalNotAllowedProducts}
         />
       </div>
 

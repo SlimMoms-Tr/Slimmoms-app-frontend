@@ -3,11 +3,66 @@
   margin-bottom: 60px;
 }
 
+.tableHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 50px;
+  gap: 20px;
+  padding: 15px 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: 600;
+  color: #212121;
+  font-size: 14px;
+}
+
+.productColumn {
+  text-align: left;
+}
+
+.quantityColumn {
+  text-align: center;
+}
+
+.caloriesColumn {
+  text-align: right;
+}
+
+.actionColumn {
+  text-align: center;
+}
+
 .container {
   max-height: 210px;
   overflow: hidden;
   overflow-y: auto;
   padding-right: 5px;
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: #fc842d;
+  border-radius: 3px;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+  background: #e6731a;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: #9b9faa;
+  padding: 40px 20px;
+  font-style: italic;
 }
 
 @media screen and (min-width: 768px) {

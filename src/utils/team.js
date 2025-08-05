@@ -1,8 +1,8 @@
 export const team = [
-  "Oğuzhan ÖRS - Team lead - FullStack Developer",
-  "Yelenay Uçar - FullStack Developer",
-  "Fatih Demir - Scrum Master - Backend Developer",
-  "Batuhan Gözcü - Backend Developer",
-  "Emre Soyaltin - Frontend Developer",
-  "İzzet Furkan - Frontend Developer",
+  "👑 Oğuzhan ÖRS - Team Lead / Fullstack",
+  "🧠 Yelenay Uçar - Fullstack",
+  "🧭 Fatih Demir - Scrum Master / Backend",
+  "🔧 Batuhan Gözcü - Backend",
+  "🎨 Emre Soyaltin - Frontend",
+  "🎨 İzzet Furkan - Frontend",
 ];

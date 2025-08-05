@@ -10,12 +10,22 @@ const DiaryProductsList = () => {
 
   return (
     <div className={styles.wrapper}>
+      <div className={styles.tableHeader}>
+        <div className={styles.productColumn}>Product Name</div>
+        <div className={styles.quantityColumn}>Quantity</div>
+        <div className={styles.caloriesColumn}>Calories</div>
+        <div className={styles.actionColumn}></div>
+      </div>
       <ul className={styles.container}>
         {products.length > 0
           ? products.map((product) => (
-              <DiaryProductsListItem key={product._id} product={product} />
-            ))
-          : []}
+            <DiaryProductsListItem key={product._id} product={product} />
+          ))
+          : (
+            <li className={styles.emptyMessage}>
+              No products added yet. Add your first product above!
+            </li>
+          )}
       </ul>
     </div>
   );

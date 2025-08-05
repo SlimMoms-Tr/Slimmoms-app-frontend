@@ -7,17 +7,32 @@ import "react-toastify/dist/ReactToastify.css";
 
 const UserAvatar = ({ name, size }) => {
   const avatarClick = () => {
-    name &&
-      toast.success(
-        <a
-          href="https://github.com/SlimMoms-Tr/Slimmoms-app-frontend"
-          target="_blank"
-          rel="noreferrer"
-          title="Project developers..."
-          alt="Project developers"
-          className={styles.avatar__link}
-        >{`${team[Math.floor(Math.random() * team.length)]}`}</a>
-      );
+    const allDevelopers = team.join("\n");
+    
+    toast.success(
+      `Developed by:\n${allDevelopers}\n\n👆 Click to visit GitHub`,
+      {
+        onClick: () => {
+          window.open(
+            "https://github.com/SlimMoms-Tr/Slimmoms-app-frontend",
+            "_blank"
+          );
+        },
+        style: {
+          cursor: "pointer",
+          minWidth: "350px",
+          maxWidth: "450px",
+          whiteSpace: "pre-line",
+          fontSize: "14px",
+          lineHeight: "1.5",
+          padding: "16px",
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+        },
+        autoClose: 6000, 
+        position: "top-center",
+      }
+    );
   };
 
   const getInitials = (name) => {
@@ -47,7 +62,7 @@ const UserAvatar = ({ name, size }) => {
         cursor: "pointer",
       }}
       onClick={avatarClick}
-      title="Click to see developers"
+      title="👥 Click to see development team"
     >
       {getInitials(name)}
     </div>

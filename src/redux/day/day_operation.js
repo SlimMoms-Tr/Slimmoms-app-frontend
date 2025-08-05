@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 import {
   setDate,
   setKcalLeft,
@@ -13,7 +14,7 @@ import api from "../../utils/api";
 
 export const getDay = createAsyncThunk(
   "day/getDay",
-  async ({ userId, date }, { dispatch }) => {
+  async ({ date }, { dispatch }) => {
     try {
       dispatch(setLoading(true));
       dispatch(setDate(date));
@@ -22,15 +23,27 @@ export const getDay = createAsyncThunk(
         params: { date },
       });
 
-      const data = response.data;
-      dispatch(setKcalLeft(data.kcalLeft || 0));
-      dispatch(setKcalConsumed(data.kcalConsumed || 0));
-      dispatch(setDailyRate(data.dailyRate || 0));
-      dispatch(setPercentsOfDailyRate(data.percentsOfDailyRate || 0));
-      dispatch(setProducts(data.products || []));
+      const data = response.data.data; 
+
+      const consumedProducts = data.consumedProducts || [];
+      const totalCalories = consumedProducts.reduce(
+        (sum, product) => sum + product.calories,
+        0
+      );
+
+      dispatch(setKcalLeft(data.totalCalories - totalCalories || 0));
+      dispatch(setKcalConsumed(totalCalories));
+      dispatch(setDailyRate(data.totalCalories || 0));
+      dispatch(
+        setPercentsOfDailyRate(
+          data.totalCalories ? (totalCalories / data.totalCalories) * 100 : 0
+        )
+      );
+      dispatch(setProducts(consumedProducts));
 
       dispatch(setLoading(false));
     } catch (error) {
+      console.error("Daily data fetch error:", error);
       dispatch(
         setError(error.response?.data?.message || "Failed to get day data")
       );
@@ -51,11 +64,24 @@ export const addProduct = createAsyncThunk(
         weight: weight,
       });
 
-      const data = response.data;
-      dispatch(setKcalLeft(data.kcalLeft || 0));
-      dispatch(setKcalConsumed(data.kcalConsumed || 0));
-      dispatch(setPercentsOfDailyRate(data.percentsOfDailyRate || 0));
-      dispatch(setProducts(data.products || []));
+      const data = response.data.data; 
+
+      toast.success(response.data.message);
+
+      const consumedProducts = data.consumedProducts || [];
+      const totalCalories = consumedProducts.reduce(
+        (sum, product) => sum + product.calories,
+        0
+      );
+
+      dispatch(setKcalLeft(data.totalCalories - totalCalories || 0));
+      dispatch(setKcalConsumed(totalCalories));
+      dispatch(
+        setPercentsOfDailyRate(
+          data.totalCalories ? (totalCalories / data.totalCalories) * 100 : 0
+        )
+      );
+      dispatch(setProducts(consumedProducts));
 
       dispatch(setLoading(false));
     } catch (error) {
@@ -78,14 +104,26 @@ export const deleteProduct = createAsyncThunk(
         productId,
       });
 
-      const data = response.data;
-      dispatch(setKcalLeft(data.kcalLeft || 0));
-      dispatch(setKcalConsumed(data.kcalConsumed || 0));
-      dispatch(setPercentsOfDailyRate(data.percentsOfDailyRate || 0));
-      dispatch(setProducts(data.products || []));
+      const data = response.data.data; 
+
+      const consumedProducts = data.consumedProducts || [];
+      const totalCalories = consumedProducts.reduce(
+        (sum, product) => sum + product.calories,
+        0
+      );
+
+      dispatch(setKcalLeft(data.totalCalories - totalCalories || 0));
+      dispatch(setKcalConsumed(totalCalories));
+      dispatch(
+        setPercentsOfDailyRate(
+          data.totalCalories ? (totalCalories / data.totalCalories) * 100 : 0
+        )
+      );
+      dispatch(setProducts(consumedProducts));
 
       dispatch(setLoading(false));
     } catch (error) {
+      console.error("Delete product error:", error);
       dispatch(
         setError(error.response?.data?.message || "Failed to delete product")
       );

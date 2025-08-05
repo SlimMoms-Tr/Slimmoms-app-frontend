@@ -5,9 +5,10 @@ import Button from "../Button/Button.jsx";
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { login } from "../../redux/auth/auth_operation";
+import { getError, getLoading } from "../../redux/auth/auth_selector";
 import routes from "../../routes";
 import { NavLink } from "react-router-dom";
 
@@ -22,6 +23,8 @@ const validationSchema = yup.object({
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
+  const error = useSelector(getError);
+  const isLoading = useSelector(getLoading);
 
   const formik = useFormik({
     initialValues: {
@@ -29,9 +32,13 @@ const LoginForm = () => {
       password: "",
     },
     validationSchema,
-    onSubmit: (values) => {
-      dispatch(login(values));
-      formik.resetForm();
+    onSubmit: async (values) => {
+      try {
+        await dispatch(login(values)).unwrap();
+        formik.resetForm();
+      } catch (error) {
+        console.log("Login error:", error);
+      }
     },
   });
 
@@ -49,6 +56,13 @@ const LoginForm = () => {
       <form className={styles.formAuth} onSubmit={formik.handleSubmit}>
         <h2 className={styles.formTitle}>Log in</h2>
 
+        {/* Error mesajı */}
+        {error && (
+          <div className={styles.errorMessage}>
+            {error}
+          </div>
+        )}
+
         <TextField
           {...commonFieldProps}
           id="email"
@@ -57,7 +71,7 @@ const LoginForm = () => {
           sx={{ mb: 5 }}
           value={formik.values.email}
           onChange={formik.handleChange}
-          error={formik.touched.login && Boolean(formik.errors.email)}
+          error={formik.touched.email && Boolean(formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
         />
 
@@ -90,10 +104,10 @@ const LoginForm = () => {
         <div className={styles.buttons}>
           <div className={styles.button}>
             <Button
-              text="Login"
+              text={isLoading ? "Logging in..." : "Login"}
               type="submit"
               customType="primary"
-              disabled={formik.isSubmitting || !formik.dirty}
+              disabled={formik.isSubmitting || !formik.dirty || isLoading}
             />
           </div>
 

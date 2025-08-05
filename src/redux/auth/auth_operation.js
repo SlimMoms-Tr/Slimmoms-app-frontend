@@ -5,6 +5,7 @@ import {
   setLoading,
   setError,
 } from "./auth_reducer";
+import { resetDailyCalories } from "../dailyCalories/dailyCalories_reducer";
 import api from "../../utils/api";
 
 export const register = createAsyncThunk(
@@ -16,8 +17,6 @@ export const register = createAsyncThunk(
       const response = await api.post("/auth/register", credentials);
 
       const data = response.data;
-      localStorage.setItem("token", data.token);
-      dispatch(setCredentials({ user: data.user, token: data.token }));
       dispatch(setLoading(false));
       return data;
     } catch (error) {
@@ -35,12 +34,15 @@ export const login = createAsyncThunk(
   async (credentials, { dispatch }) => {
     try {
       dispatch(setLoading(true));
+      dispatch(setError(null));
+
+      dispatch(resetDailyCalories());
 
       const response = await api.post("/auth/login", credentials);
 
       const data = response.data;
-      localStorage.setItem("token", data.token);
-      dispatch(setCredentials({ user: data.user, token: data.token }));
+      localStorage.setItem("accessToken", data.data.accessToken);
+      dispatch(setCredentials({ user: null, token: data.data.accessToken }));
       dispatch(setLoading(false));
       return data;
     } catch (error) {
@@ -61,10 +63,8 @@ export const getUser = createAsyncThunk(
         return;
       }
 
-      const response = await api.get("/auth/me");
-      const data = response.data;
-      dispatch(setCredentials({ user: data, token }));
-    } catch (error) {
+      dispatch(setCredentials({ user: null, token }));
+    } catch {
       dispatch(logOutAction());
     }
   }
@@ -78,8 +78,9 @@ export const logOut = createAsyncThunk(
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem("token");
+      localStorage.removeItem("accessToken");
       dispatch(logOutAction());
+      dispatch(resetDailyCalories());
     }
   }
 );

@@ -27,10 +27,12 @@ const App = () => {
   const isAccess = useSelector(getIsAuthenticated);
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
+    // Sadece bir kez çalışsın ve token varsa
+    const token = localStorage.getItem("accessToken");
+    if (token && !isAccess) {
       dispatch(getUser());
     }
-  }, [dispatch]);
+  }, [dispatch, isAccess]); // Dependency'leri ekledim
 
   return (
     <>

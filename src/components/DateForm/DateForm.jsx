@@ -2,68 +2,77 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getDay } from "../../redux/day/day_operation";
+import { setDate } from "../../redux/day/day-reducer";
 import { getUserId } from "../../redux/user/user_selector";
+import { getIsAuthenticated } from "../../redux/auth/auth_selector";
+import { date } from "../../redux/day/day_selector";
 
 import styles from "./DateForm.module.css";
 
-import { ReactComponent as CalendarIcon } from "../../images/bg-pictures/mobile/calender-1.svg";
+import calendarIcon from "../../images/bg/mobile/calender.svg";
 
 const DateForm = () => {
   const dispatch = useDispatch();
+  const currentDate = useSelector(date);
+  const userId = useSelector(getUserId);
+  const isAuthenticated = useSelector(getIsAuthenticated);
+
   const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0]
+    currentDate || new Date().toISOString().split("T")[0]
   );
 
-  const userId = useSelector(getUserId);
-
-  const isoDateTime = new Date(
-    new Date(startDate).getTime() -
-      new Date(startDate).getTimezoneOffset() * 60000
-  )
-    .toISOString()
-    .split("T")[0];
 
   useEffect(() => {
-    dispatch(getDay({ userId, date: isoDateTime }));
-  }, [dispatch, startDate, isoDateTime, userId]);
+    if (currentDate && currentDate !== startDate) {
+      setStartDate(currentDate);
+    }
+  }, [currentDate, startDate]);
 
   const handleDateChange = (event) => {
-    setStartDate(event.target.value);
+    const newDate = event.target.value;
+    setStartDate(newDate);
+    
+    dispatch(setDate(newDate));
+    
+    if (isAuthenticated && userId && localStorage.getItem("accessToken")) {
+      dispatch(getDay({ userId, date: newDate }));
+    }
   };
 
   const formatDateForDisplay = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
+    return date.toLocaleDateString("tr-TR", {
       day: "2-digit",
+      month: "2-digit", 
+      year: "numeric",
     });
   };
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.dateInputContainer}>
-        <input
-          type="date"
-          value={startDate}
-          onChange={handleDateChange}
-          max={new Date().toISOString().split("T")[0]}
-          className={styles.dateInput}
-        />
-        <CalendarIcon
+      <div className={styles.dateContainer}>
+        <span className={styles.dateDisplay}>
+          {formatDateForDisplay(startDate)}
+        </span>
+        <img
+          src={calendarIcon}
           alt="Select date on calendar"
           title="Click to select date"
-          width="18px"
-          height="20px"
-          className={styles.icon}
+          width="18"
+          height="20"
+          className={styles.calendarIcon}
           onClick={() =>
             document.querySelector(`.${styles.dateInput}`).showPicker()
           }
         />
       </div>
-      <span className={styles.dateDisplay}>
-        {formatDateForDisplay(startDate)}
-      </span>
+      <input
+        type="date"
+        value={startDate}
+        onChange={handleDateChange}
+        max={new Date().toISOString().split("T")[0]}
+        className={styles.dateInput}
+      />
     </div>
   );
 };
