@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./DiaryAddProductForm.module.css";
 import TextField from "@mui/material/TextField";
 import Button from "../Button/Button.jsx";
@@ -58,23 +58,29 @@ const DiaryAddProductForm = () => {
   const [searchProductRes, setSearchProductRes] = useState([]);
   const { productName } = formik.values;
   const [selectedData, setSelectedData] = useState("");
-  const [t, setT] = useState(null);
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
-    if (t) clearTimeout(t);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
 
     if (productName.length >= 3) {
-      setT(setTimeout(() => fetchData(productName), 500));
+      timeoutRef.current = setTimeout(() => fetchData(productName), 500);
     } else {
       setSearchProductRes([]);
     }
-  }, [productName, t]);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [productName]);
 
   const fetchData = async (name) => {
     try {
-      console.log("Searching for:", name);
       const { data } = await productApi.searchProducts(name);
-      console.log("API Response:", data);
       setSearchProductRes(data.data); 
     } catch (error) {
       console.error("Error fetching products:", error);

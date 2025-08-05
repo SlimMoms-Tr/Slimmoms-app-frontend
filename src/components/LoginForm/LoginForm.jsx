@@ -37,7 +37,7 @@ const LoginForm = () => {
         await dispatch(login(values)).unwrap();
         formik.resetForm();
       } catch (error) {
-        console.log("Login error:", error);
+        // Error handling is done in the Redux operation
       }
     },
   });
