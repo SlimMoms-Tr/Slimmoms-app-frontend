@@ -1,52 +1,52 @@
 .header {
+  position: relative;
+  padding: 18px 0;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.flexContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  margin-bottom: 40px;
-  border-bottom: 1px solid #E0E0E0;
 }
 
-.right {
+.flexContainer2 {
   display: flex;
   align-items: center;
-  gap: 24px;
 }
 
-.right::before {
-  content: '';
-  width: 1px;
-  height: 20px;
-  background-color: #E0E0E0;
-  margin: 0 12px;
-}
-
-/* Tablet */
-@media (max-width: 1024px) {
+@media (max-width: 767px) {
   .header {
-    padding: 16px 0;
-    margin-bottom: 30px;
-  }
-  
-  .right {
-    gap: 20px;
+    margin-bottom: 40px;
   }
 }
 
-/* Mobil */
-@media (max-width: 768px) {
+@media screen and (min-width: 768px) {
+  .flexContainer {
+    padding: 0 87px 0 69px;
+  }
+}
+
+@media (min-width: 1280px) {
   .header {
-  
-    gap: 16px;
-    padding: 16px 0;
-    margin-bottom: 24px;
+    border-bottom: 0;
+    padding: 0;
   }
 
-  .right {
-    gap: 12px;
+  .flexContainer {
+    height: auto;
+    padding: 123px 115px 0 90px;
+    justify-content: start;
+    align-items: baseline;
   }
-  
-  .right::before {
-    display: none;
+
+  .flexContainer2 {
+    flex-direction: row-reverse;
+    flex-grow: 1;
+  }
+
+  .coloredBg {
+    height: 16vh;
+    background-image: linear-gradient(to right, #ffffff 58%, #f0f1f3 42%);
   }
 }

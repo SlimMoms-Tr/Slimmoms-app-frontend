@@ -1,19 +1,27 @@
 import styles from "./Header.module.css";
-import Logo from "../Logo/Logo.jsx";
-import Navigation from "../Navigation/Navigation";
-import UserInfo from "../UserInfo/UserInfo.jsx";
 import { useSelector } from "react-redux";
+import Container from "../Container/Container.jsx";
+import Logo from "../Logo/Logo.jsx";
+import UserInfo from "../UserInfo/UserInfo.jsx";
+import Navigation from "../Navigation/Navigation.jsx";
+import { getIsAuthenticated } from "../../redux/auth/auth_selector";
 
-export default function Header() {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
+const Header = ({ isHidden, coloredBg }) => {
+  const isLogged = useSelector(getIsAuthenticated);
+  const addBg = coloredBg ? styles.coloredBg : null;
   return (
     <header className={styles.header}>
-      <Logo />
-      <div className={styles.right}>
-        <Navigation />
-        {isAuthenticated && <UserInfo />}
-      </div>
+      <Container>
+        <div className={`${styles.flexContainer} ${addBg}`}>
+          <Logo isLogged={isLogged} />
+          <div className={styles.flexContainer2}>
+            {isLogged && <UserInfo />}
+            <Navigation isLogged={isLogged} isHidden={isHidden} />
+          </div>
+        </div>
+      </Container>
     </header>
   );
-}
+};
+
+export default Header;

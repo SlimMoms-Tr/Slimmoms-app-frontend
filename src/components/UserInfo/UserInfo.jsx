@@ -1,24 +1,35 @@
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../redux/authSlice";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserNickName } from "../../redux/user/user_selector";
+import { logOut } from "../../redux/auth/auth_operation";
+
+import UserAvatar from "../UserAvatar/UserAvatar.jsx";
+
 import styles from "./UserInfo.module.css";
 
-export default function UserInfo() {
+const UserInfo = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const onLogout = () => dispatch(logOut());
+  const Nickname = useSelector(getUserNickName);
+  const [size, setSize] = useState(window.innerWidth < 767 ? "30px" : "40px");
 
-  if (!isAuthenticated) return null;
+  window.onresize = () => {
+    return setSize(window.innerWidth < 767 ? "30px" : "40px");
+  };
 
   return (
     <div className={styles.userInfo}>
-      <span className={styles.username}>{user?.name || "Nic"}</span>
-      <div className={styles.separator}></div>
-      <button
-        className={styles.logoutBtn}
-        onClick={() => dispatch(logout())}
-      >
-        Exit
+      <div className={styles.userAvatarBlock}>
+        <div className={styles.userAvatar}>
+          <UserAvatar name={Nickname} size={size} />
+        </div>
+      </div>
+      <span className={styles.userNickname}>{Nickname}</span>
+      <button className={styles.button} type="button" onClick={onLogout}>
+        Logout
       </button>
     </div>
   );
-}
+};
+
+export default UserInfo;

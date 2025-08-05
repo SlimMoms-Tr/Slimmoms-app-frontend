@@ -1,12 +1,21 @@
-import { useNavigate } from "react-router-dom";
 import styles from "./Logo.module.css";
-import logoImg from "../../../frontend/src/assets/logo.png"; // logo.png dosyasını src/assets içine kopyala
+import logo from "../../images/logo/logo.svg";
+import { Link } from "react-router-dom";
+import routes from "../../routes";
 
-export default function Logo() {
-  const navigate = useNavigate();
+const Logo = ({ isLogged }) => {
+  const hidden = isLogged ? null : styles.isHidden;
+  
+  const targetRoute = isLogged ? routes.calculator : routes.home;
+  
   return (
-    <div className={styles.logo} onClick={() => navigate("/")}>
-      <img src={logoImg} alt="SlimMom Logo" className={styles.logoImg} />
-    </div>
+    <Link to={targetRoute} className={styles.link}>
+      <img src={logo} alt="SlimMom Logo" className={styles.logo} />
+      <p className={`${styles.logoTitle} ${hidden}`}>
+        Slim<span className={styles.activeColorLogo}>Mom</span>
+      </p>
+    </Link>
   );
-}
+};
+
+export default Logo;

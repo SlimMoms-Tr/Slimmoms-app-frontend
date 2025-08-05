@@ -1,0 +1,71 @@
+.item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 50px;
+  gap: 20px;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #e0e0e0;
+  font-family: Verdana, sans-serif;
+  font-size: 14px;
+  line-height: 17px;
+  letter-spacing: 0.04em;
+  color: #212121;
+  font-weight: normal;
+}
+
+.productName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #212121;
+}
+
+.quantity {
+  text-align: center;
+  color: #212121;
+}
+
+.calories {
+  text-align: right;
+  color: #212121;
+}
+
+.action {
+  text-align: center;
+}
+
+.deleteIcon {
+  color: #9b9faa;
+  cursor: pointer;
+  transition: all 250ms linear;
+  font-size: 18px;
+}
+
+.deleteIcon:hover {
+  color: #fc842d;
+  transform: scale(1.1);
+  transition: all 250ms linear;
+}
+
+.disabled {
+  color: rgba(155, 159, 170, 0.2);
+  cursor: auto;
+}
+
+.deleteIcon.disabled:hover {
+  color: rgba(155, 159, 170, 0.2);
+  transform: none;
+}
+
+@media (max-width: 767px) {
+  .item {
+    grid-template-columns: 1.5fr 1fr 1fr 40px;
+    gap: 10px;
+    font-size: 12px;
+    padding: 10px 0;
+  }
+
+  .deleteIcon {
+    font-size: 16px;
+  }
+}
