@@ -72,10 +72,13 @@ const DiaryAddProductForm = () => {
 
   const fetchData = async (name) => {
     try {
+      console.log("Searching for:", name);
       const { data } = await productApi.searchProducts(name);
+      console.log("API Response:", data);
       setSearchProductRes(data.data); 
     } catch (error) {
       console.error("Error fetching products:", error);
+      console.error("Error details:", error.response?.data);
       setSearchProductRes([]);
     }
   };

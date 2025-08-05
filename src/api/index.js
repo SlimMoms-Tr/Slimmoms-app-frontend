@@ -9,6 +9,15 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Product search için ayrı instance (CORS sorunu için)
+const productSearchApi = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: false,
+});
+
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
@@ -79,6 +88,6 @@ export const dailyApi = {
 
 export const productApi = {
   searchProducts: (query) =>
-    api.get("/products/search", { params: { search: query } }),
+    productSearchApi.get("/products/search", { params: { search: query } }),
   getAllProducts: () => api.get("/products"),
 };
